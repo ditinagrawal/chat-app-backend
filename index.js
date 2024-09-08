@@ -1,11 +1,27 @@
-const express = require("express")
+// importing required modules
+const express = require("express");
+const connectDB = require("./db/db");
+const cors = require("cors");
+const router = require("./routes/routes");
+require("dotenv/config");
 
-const app = express()
+// initialize express app
+const app = express();
 
-app.get("/", (req, res) => {
-    res.send("Hello World")
-})
+// middlewares
+app.use(express.json());
+app.use(cors());
 
-app.listen(3000, () => {
-    console.log("Server is running on port 3000")
-})
+// routes
+app.use(router);
+
+// connect to database and start server
+connectDB()
+  .then(() => {
+    app.listen(process.env.PORT, () => {
+      console.log(`Server is running : http://localhost:${process.env.PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.log("MONGO db connection failed !!! ", err);
+  });
